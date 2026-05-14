@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>えカード</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    min-height: 100vh;
+    background: #fff8f0;
+    font-family: 'Hiragino Kaku Gothic Pro', 'メイリオ', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5rem 1rem;
+  }
+
+  /* ヘッダー */
+  .header {
+    width: 100%;
+    max-width: 480px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+  .back-btn {
+    background: #fff;
+    border: 2px solid #ddd;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+  .back-btn.visible { display: flex; }
+  .title {
+    flex: 1;
+    text-align: center;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #333;
+  }
+
+  /* カテゴリ選択 */
+  .category-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    width: 100%;
+    max-width: 480px;
+  }
+  .category-btn {
+    background: #fff;
+    border: 3px solid transparent;
+    border-radius: 20px;
+    padding: 1.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .category-btn:active { transform: scale(0.96); }
+  .category-btn .cat-emoji { font-size: 2.5rem; }
+  .category-btn .cat-name { font-size: 1rem; font-weight: 700; color: #333; }
+  .category-btn.cat-0 { border-color: #ff9a3c; }
+  .category-btn.cat-1 { border-color: #ff6b9d; }
+  .category-btn.cat-2 { border-color: #4ecdc4; }
+  .category-btn.cat-3 { border-color: #a78bfa; }
+
+  /* カード画面 */
+  .card-screen { display: none; width: 100%; max-width: 480px; flex-direction: column; align-items: center; }
+  .card-screen.visible { display: flex; }
+
+  .card {
+    width: 100%;
+    background: #fff;
+    border-radius: 24px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.10);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    min-height: 300px;
+    justify-content: center;
+  }
+  .card.anim { animation: popIn 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+  .card-img {
+    width: 180px;
+    height: 180px;
+    object-fit: contain;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+  }
+  .card-emoji-large { font-size: 7rem; margin-bottom: 1rem; line-height: 1; }
+  .card-label {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #333;
+    letter-spacing: 0.1em;
+  }
+
+  /* ボタン群 */
+  .btn-row {
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+    justify-content: center;
+  }
+  .btn {
+    padding: 0.9rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: transform 0.1s;
+  }
+  .btn:active { transform: scale(0.96); }
+  .btn-next { background: #ff9a3c; color: #fff; }
+  .btn-speak { background: #4ecdc4; color: #fff; }
+
+  /* 進捗 */
+  .progress {
+    color: #aaa;
+    font-size: 0.85rem;
+    margin-top: 1rem;
+  }
+
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.8); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <button class="back-btn" id="backBtn" onclick="showCategory()">◀</button>
+  <div class="title" id="headerTitle">えカード</div>
+</div>
+
+<!-- カテゴリ選択 -->
+<div class="category-grid" id="categoryScreen">
+  <button class="category-btn cat-0" onclick="startCategory(0)">
+    <span class="cat-emoji">🍎</span>
+    <span class="cat-name">もの</span>
+  </button>
+  <button class="category-btn cat-1" onclick="startCategory(1)">
+    <span class="cat-emoji">😊</span>
+    <span class="cat-name">きもち</span>
+  </button>
+  <button class="category-btn cat-2" onclick="startCategory(2)">
+    <span class="cat-emoji">🏃</span>
+    <span class="cat-name">こうどう</span>
+  </button>
+  <button class="category-btn cat-3" onclick="startCategory(3)">
+    <span class="cat-emoji">📅</span>
+    <span class="cat-name">スケジュール</span>
+  </button>
+</div>
+
+<!-- カード表示 -->
+<div class="card-screen" id="cardScreen">
+  <div class="card" id="card">
+    <div class="card-emoji-large" id="cardEmoji"></div>
+    <img class="card-img" id="cardImg" style="display:none" alt="">
+    <div class="card-label" id="cardLabel"></div>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-speak" onclick="speak()">🔊 よむ</button>
+    <button class="btn btn-next" onclick="next()">つぎ ▶</button>
+  </div>
+  <div class="progress" id="progress"></div>
+</div>
+
+<script>
+// =============================================
+// カードデータ
+// img: 画像URLを入れる（空文字 "" にすると絵文字表示）
+// =============================================
+const categories = [
+  {
+    name: "もの",
+    color: "#ff9a3c",
+    cards: [
+      { label: "りんご",   emoji: "🍎", img: "" },
+      { label: "バナナ",   emoji: "🍌", img: "" },
+      { label: "くつ",     emoji: "👟", img: "" },
+      { label: "いす",     emoji: "🪑", img: "" },
+      { label: "かばん",   emoji: "🎒", img: "" },
+      { label: "ほん",     emoji: "📚", img: "" },
+      { label: "でんしゃ", emoji: "🚃", img: "" },
+      { label: "ボール",   emoji: "⚽", img: "" },
+    ]
+  },
+  {
+    name: "きもち",
+    color: "#ff6b9d",
+    cards: [
+      { label: "うれしい", emoji: "😄", img: "" },
+      { label: "かなしい", emoji: "😢", img: "" },
+      { label: "こわい",   emoji: "😨", img: "" },
+      { label: "いたい",   emoji: "🤕", img: "" },
+      { label: "おこった", emoji: "😠", img: "" },
+      { label: "つかれた", emoji: "😴", img: "" },
+      { label: "たのしい", emoji: "🥳", img: "" },
+      { label: "はずかしい", emoji: "😳", img: "" },
+    ]
+  },
+  {
+    name: "こうどう",
+    color: "#4ecdc4",
+    cards: [
+      { label: "たべる",   emoji: "🍽️", img: "" },
+      { label: "のむ",     emoji: "🥤", img: "" },
+      { label: "ねる",     emoji: "🛏️", img: "" },
+      { label: "あそぶ",   emoji: "🧸", img: "" },
+      { label: "トイレ",   emoji: "🚽", img: "" },
+      { label: "てをあらう", emoji: "🙌", img: "" },
+      { label: "はをみがく", emoji: "🦷", img: "" },
+      { label: "おふろ",   emoji: "🛁", img: "" },
+    ]
+  },
+  {
+    name: "スケジュール",
+    color: "#a78bfa",
+    cards: [
+      { label: "おきる",   emoji: "⏰", img: "" },
+      { label: "あさごはん", emoji: "🍳", img: "" },
+      { label: "きがえる", emoji: "👕", img: "" },
+      { label: "でかける", emoji: "🚪", img: "" },
+      { label: "かえる",   emoji: "🏠", img: "" },
+      { label: "ひるごはん", emoji: "🍱", img: "" },
+      { label: "よるごはん", emoji: "🍚", img: "" },
+      { label: "おやすみ", emoji: "🌙", img: "" },
+    ]
+  }
+];
+
+let currentCat = null;
+let currentIndex = 0;
+let shuffled = [];
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function showCategory() {
+  document.getElementById('categoryScreen').style.display = 'grid';
+  document.getElementById('cardScreen').classList.remove('visible');
+  document.getElementById('backBtn').classList.remove('visible');
+  document.getElementById('headerTitle').textContent = 'えカード';
+}
+
+function startCategory(idx) {
+  currentCat = categories[idx];
+  shuffled = shuffle(currentCat.cards);
+  currentIndex = 0;
+  document.getElementById('categoryScreen').style.display = 'none';
+  document.getElementById('cardScreen').classList.add('visible');
+  document.getElementById('backBtn').classList.add('visible');
+  document.getElementById('headerTitle').textContent = currentCat.name;
+  document.body.style.background = currentCat.color + '22';
+  showCard();
+
+  // プリロード
+  currentCat.cards.forEach(c => {
+    if (c.img) { const i = new Image(); i.src = c.img; }
+  });
+}
+
+function showCard() {
+  const c = shuffled[currentIndex];
+  const card = document.getElementById('card');
+  const emoji = document.getElementById('cardEmoji');
+  const img = document.getElementById('cardImg');
+  const label = document.getElementById('cardLabel');
+
+  card.className = 'card';
+  void card.offsetWidth;
+  card.className = 'card anim';
+
+  if (c.img) {
+    img.src = c.img;
+    img.style.display = 'block';
+    emoji.style.display = 'none';
+    img.onerror = () => { img.style.display = 'none'; emoji.style.display = 'block'; };
+  } else {
+    img.style.display = 'none';
+    emoji.style.display = 'block';
+  }
+  emoji.textContent = c.emoji;
+  label.textContent = c.label;
+
+  document.getElementById('progress').textContent =
+    (currentIndex + 1) + ' / ' + shuffled.length;
+
+  speak();
+}
+
+function next() {
+  currentIndex = (currentIndex + 1) % shuffled.length;
+  if (currentIndex === 0) shuffled = shuffle(currentCat.cards);
+  showCard();
+}
+
+function speak() {
+  const label = document.getElementById('cardLabel').textContent;
+  if (!label) return;
+  const u = new SpeechSynthesisUtterance(label);
+  u.lang = 'ja-JP';
+  u.rate = 0.85;
+  speechSynthesis.cancel();
+  speechSynthesis.speak(u);
+}
+</script>
+</body>
+</html>
