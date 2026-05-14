@@ -249,28 +249,36 @@
     text-align: center;
   }
   .done-screen.visible { display: flex; }
-  .done-emoji { font-size: 5rem; animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1); }
-  .done-title { font-size: 1.6rem; font-weight: 700; color: #333; }
-  .done-sub { font-size: 1rem; color: #888; line-height: 1.7; }
-  .selected-list {
-    width: 100%;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.6rem;
-    justify-content: center;
-  }
-  .selected-tag {
-    background: #fff;
-    border: 2px solid var(--cat-color);
-    border-radius: 50px;
-    padding: 0.4rem 1rem;
-    font-size: 1rem;
+  .done-title {
+    font-size: 1.4rem;
     font-weight: 700;
     color: #333;
+    animation: popIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .done-card {
+    width: 200px;
+    height: 200px;
+    background: #fff;
+    border-radius: 24px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
     display: flex;
     align-items: center;
-    gap: 0.4rem;
-    animation: popIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    justify-content: center;
+    animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .done-card img {
+    width: 160px;
+    height: 160px;
+    object-fit: contain;
+    border-radius: 12px;
+  }
+  .done-emoji { font-size: 7rem; line-height: 1; }
+  .done-word {
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: #333;
+    letter-spacing: 0.1em;
+    animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1);
   }
   .btn-restart {
     padding: 0.9rem 2.5rem;
@@ -332,10 +340,12 @@
 
 <!-- 完了画面 -->
 <div class="done-screen" id="doneScreen">
-  <div class="done-emoji" id="doneEmoji">🎉</div>
   <div class="done-title">えらべたね！</div>
-  <div class="done-sub" id="doneSub"></div>
-  <div class="selected-list" id="selectedList"></div>
+  <div class="done-card" id="doneCard">
+    <img id="doneImg" style="display:none" alt="">
+    <div class="done-emoji" id="doneEmoji" style="display:none"></div>
+  </div>
+  <div class="done-word" id="doneWord" onclick="speak(selectedCards[0].label)" style="cursor:pointer"></div>
   <button class="btn-restart" id="btnRestart" onclick="showCategory()">もどる</button>
 </div>
 
@@ -522,9 +532,20 @@ function renderSet() {
     setIndex + 1 + ' / ' + total + ' ページ';
 }
 
+function speak(text) {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'ja-JP';
+  utter.rate = 0.85;
+  utter.pitch = 1.1;
+  window.speechSynthesis.speak(utter);
+}
+
 function toggleSelect(div, card) {
-  // 1枚タップで即確定
+  // 1枚タップで即確定＋読み上げ
   selectedCards = [card];
+  speak(card.label);
   showDone();
 }
 
@@ -544,30 +565,25 @@ function showDone() {
   document.getElementById('cardScreen').classList.remove('visible');
   document.getElementById('doneScreen').classList.add('visible');
 
-  // カテゴリカラーをリスタートボタンに適用
+  const card = selectedCards[0];
   document.getElementById('btnRestart').style.background = currentCat.color;
+  document.getElementById('doneWord').textContent = card.label;
 
-  // 選んだカード数に応じてメッセージ変更
-  const sub = document.getElementById('doneSub');
-  if (selectedCards.length === 1) {
-    sub.textContent = selectedCards[0].label + ' を えらんだね！';
+  // 完了画面でもう一度読み上げ
+  setTimeout(() => speak(card.label), 300);
+
+  const doneImg = document.getElementById('doneImg');
+  const doneEmoji = document.getElementById('doneEmoji');
+
+  if (card.img) {
+    doneImg.src = card.img;
+    doneImg.style.display = 'block';
+    doneEmoji.style.display = 'none';
   } else {
-    sub.textContent = selectedCards.length + ' つ えらんだね！';
+    doneEmoji.textContent = card.emoji;
+    doneEmoji.style.display = 'block';
+    doneImg.style.display = 'none';
   }
-
-  // 選択タグを表示
-  const list = document.getElementById('selectedList');
-  list.innerHTML = '';
-  selectedCards.forEach(c => {
-    const tag = document.createElement('div');
-    tag.className = 'selected-tag';
-    tag.textContent = (c.img ? '' : c.emoji + ' ') + c.label;
-    list.appendChild(tag);
-  });
-
-  // 完了絵文字はカテゴリのメインカードの絵文字を使う
-  document.getElementById('doneEmoji').textContent =
-    selectedCards.length > 0 ? selectedCards[0].emoji : '🎉';
 }
 
 function openOverlay(card) {
