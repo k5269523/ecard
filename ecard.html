@@ -535,17 +535,17 @@ function renderSet() {
 function speak(text) {
   if (!window.speechSynthesis) return;
   window.speechSynthesis.cancel();
-  const utter = new SpeechSynthesisUtterance(text);
-  utter.lang = 'ja-JP';
-  utter.rate = 0.85;
-  utter.pitch = 1.1;
-  window.speechSynthesis.speak(utter);
+  setTimeout(() => {
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = 'ja-JP';
+    utter.rate = 0.85;
+    utter.pitch = 1.1;
+    window.speechSynthesis.speak(utter);
+  }, 100);
 }
 
 function toggleSelect(div, card) {
-  // 1枚タップで即確定＋読み上げ
   selectedCards = [card];
-  speak(card.label);
   showDone();
 }
 
@@ -569,8 +569,7 @@ function showDone() {
   document.getElementById('btnRestart').style.background = currentCat.color;
   document.getElementById('doneWord').textContent = card.label;
 
-  // 完了画面でもう一度読み上げ
-  setTimeout(() => speak(card.label), 300);
+  speak(card.label);
 
   const doneImg = document.getElementById('doneImg');
   const doneEmoji = document.getElementById('doneEmoji');
