@@ -16,7 +16,6 @@
     padding: 1.5rem 1rem;
   }
 
-  /* ヘッダー */
   .header {
     width: 100%;
     max-width: 480px;
@@ -35,6 +34,7 @@
     display: none;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
   }
   .back-btn.visible { display: flex; }
   .title {
@@ -44,6 +44,7 @@
     font-weight: 700;
     color: #333;
   }
+  .spacer { width: 44px; flex-shrink: 0; }
 
   /* カテゴリ選択 */
   .category-grid {
@@ -64,7 +65,7 @@
     gap: 0.5rem;
     cursor: pointer;
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    transition: transform 0.15s, box-shadow 0.15s;
+    transition: transform 0.15s;
   }
   .category-btn:active { transform: scale(0.96); }
   .category-btn .cat-emoji { font-size: 2.5rem; }
@@ -78,65 +79,216 @@
   .card-screen { display: none; width: 100%; max-width: 480px; flex-direction: column; align-items: center; }
   .card-screen.visible { display: flex; }
 
-  .card {
+  /* 4枚グリッド */
+  .card-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
     width: 100%;
+    margin-bottom: 1.2rem;
+  }
+  .card-item {
+    background: #fff;
+    border: 3px solid #eee;
+    border-radius: 16px;
+    padding: 0.8rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+    transition: transform 0.15s, border-color 0.15s;
+    min-height: 140px;
+    position: relative;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .card-item:active { transform: scale(0.95); }
+  .card-item.selected {
+    border-color: var(--cat-color);
+    box-shadow: 0 0 0 3px var(--cat-color-light);
+  }
+  .card-item img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    border-radius: 8px;
+  }
+  .card-item .item-emoji { font-size: 3.5rem; line-height: 1; }
+  .card-item .item-label {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #333;
+    margin-top: 0.5rem;
+    min-height: 1.4em;
+    text-align: center;
+  }
+
+  /* 選択済みチェックマーク */
+  .check-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--cat-color);
+    color: #fff;
+    font-size: 0.85rem;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+  }
+  .card-item.selected .check-badge { display: flex; }
+
+  /* 拡大表示オーバーレイ */
+  .overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+  }
+  .overlay.visible { display: flex; }
+  .overlay-card {
     background: #fff;
     border-radius: 24px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.10);
     padding: 2rem;
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 1.5rem;
-    min-height: 300px;
-    justify-content: center;
+    gap: 1rem;
+    animation: popIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    max-width: 280px;
+    width: 90%;
   }
-  .card.anim { animation: popIn 0.3s cubic-bezier(0.34,1.56,0.64,1); }
-  .card-img {
-    width: 180px;
-    height: 180px;
+  .overlay-card img {
+    width: 160px;
+    height: 160px;
     object-fit: contain;
     border-radius: 12px;
-    margin-bottom: 1rem;
   }
-  .card-emoji-large { font-size: 7rem; margin-bottom: 1rem; line-height: 1; }
-  .card-label {
+  .overlay-emoji { font-size: 6rem; line-height: 1; }
+  .overlay-label {
     font-size: 2rem;
     font-weight: 700;
     color: #333;
     letter-spacing: 0.1em;
   }
-
-  /* ボタン群 */
-  .btn-row {
-    display: flex;
-    gap: 1rem;
-    width: 100%;
-    justify-content: center;
+  .overlay-close {
+    background: #eee;
+    border: none;
+    border-radius: 50px;
+    padding: 0.6rem 2rem;
+    font-size: 1rem;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 700;
   }
-  .btn {
-    padding: 0.9rem 2rem;
+
+  /* ボタンエリア */
+  .btn-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.7rem;
+    width: 100%;
+  }
+  .btn-next {
+    padding: 0.9rem 2.5rem;
     font-size: 1.1rem;
     font-weight: 700;
     border: none;
     border-radius: 50px;
     cursor: pointer;
     font-family: inherit;
-    transition: transform 0.1s;
+    color: #fff;
+    transition: transform 0.1s, opacity 0.2s;
+    width: 100%;
+    max-width: 320px;
   }
-  .btn:active { transform: scale(0.96); }
-  .btn-next { background: #ff9a3c; color: #fff; }
-  .btn-speak { background: #4ecdc4; color: #fff; }
+  .btn-next:active { transform: scale(0.96); }
+  .btn-next:disabled { opacity: 0.4; cursor: default; }
 
-  /* 進捗 */
+  /* 「ここにない」ボタン */
+  .btn-none {
+    padding: 0.7rem 2rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    border: 2px solid #ccc;
+    border-radius: 50px;
+    cursor: pointer;
+    font-family: inherit;
+    color: #888;
+    background: transparent;
+    transition: transform 0.1s, border-color 0.2s, color 0.2s;
+    width: 100%;
+    max-width: 320px;
+  }
+  .btn-none:active { transform: scale(0.96); }
+  .btn-none:hover { border-color: #aaa; color: #555; }
+
   .progress {
     color: #aaa;
     font-size: 0.85rem;
-    margin-top: 1rem;
+    margin-top: 0.8rem;
   }
 
+  /* 完了画面 */
+  .done-screen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 480px;
+    padding-top: 2rem;
+    text-align: center;
+  }
+  .done-screen.visible { display: flex; }
+  .done-emoji { font-size: 5rem; animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+  .done-title { font-size: 1.6rem; font-weight: 700; color: #333; }
+  .done-sub { font-size: 1rem; color: #888; line-height: 1.7; }
+  .selected-list {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    justify-content: center;
+  }
+  .selected-tag {
+    background: #fff;
+    border: 2px solid var(--cat-color);
+    border-radius: 50px;
+    padding: 0.4rem 1rem;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    animation: popIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .btn-restart {
+    padding: 0.9rem 2.5rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    font-family: inherit;
+    color: #fff;
+    transition: transform 0.1s;
+    width: 100%;
+    max-width: 320px;
+  }
+  .btn-restart:active { transform: scale(0.96); }
+
   @keyframes popIn {
-    from { opacity: 0; transform: scale(0.8); }
+    from { opacity: 0; transform: scale(0.7); }
     to   { opacity: 1; transform: scale(1); }
   }
 </style>
@@ -144,8 +296,9 @@
 <body>
 
 <div class="header">
-  <button class="back-btn" id="backBtn" onclick="showCategory()">◀</button>
+  <button class="back-btn" id="backBtn" onclick="goBack()">◀</button>
   <div class="title" id="headerTitle">えカード</div>
+  <div class="spacer" id="headerSpacer"></div>
 </div>
 
 <!-- カテゴリ選択 -->
@@ -168,29 +321,40 @@
   </button>
 </div>
 
-<!-- カード表示 -->
+<!-- カード画面 -->
 <div class="card-screen" id="cardScreen">
-  <div class="card" id="card">
-    <div class="card-emoji-large" id="cardEmoji"></div>
-    <img class="card-img" id="cardImg" style="display:none" alt="">
-    <div class="card-label" id="cardLabel"></div>
-  </div>
-  <div class="btn-row">
-    <button class="btn btn-speak" onclick="speak()">🔊 よむ</button>
-    <button class="btn btn-next" onclick="next()">つぎ ▶</button>
+  <div class="card-grid" id="cardGrid"></div>
+  <div class="btn-area">
+    <button class="btn-none" onclick="nextSet()">ここにない　▶</button>
   </div>
   <div class="progress" id="progress"></div>
 </div>
 
+<!-- 完了画面 -->
+<div class="done-screen" id="doneScreen">
+  <div class="done-emoji" id="doneEmoji">🎉</div>
+  <div class="done-title">えらべたね！</div>
+  <div class="done-sub" id="doneSub"></div>
+  <div class="selected-list" id="selectedList"></div>
+  <button class="btn-restart" id="btnRestart" onclick="showCategory()">もどる</button>
+</div>
+
+<!-- 拡大オーバーレイ -->
+<div class="overlay" id="overlay" onclick="closeOverlay()">
+  <div class="overlay-card" onclick="event.stopPropagation()">
+    <div class="overlay-emoji" id="overlayEmoji" style="display:none"></div>
+    <img id="overlayImg" style="display:none" alt="">
+    <div class="overlay-label" id="overlayLabel"></div>
+    <button class="overlay-close" onclick="closeOverlay()">とじる</button>
+  </div>
+</div>
+
 <script>
-// =============================================
-// カードデータ
-// img: 画像URLを入れる（空文字 "" にすると絵文字表示）
-// =============================================
 const categories = [
   {
     name: "もの",
     color: "#ff9a3c",
+    colorLight: "#ff9a3c33",
     cards: [
       { label: "りんご",   emoji: "🍎", img: "" },
       { label: "バナナ",   emoji: "🍌", img: "" },
@@ -205,50 +369,56 @@ const categories = [
   {
     name: "きもち",
     color: "#ff6b9d",
+    colorLight: "#ff6b9d33",
     cards: [
-      { label: "うれしい", emoji: "😄", img: "https://i.imgur.com/cNwxC6a.png" },
-      { label: "かなしい", emoji: "😢", img: "https://i.imgur.com/BCDTq32.png" },
-      { label: "こわい",   emoji: "😨", img: "https://i.imgur.com/CtLpkfU.png" },
-      { label: "いたい",   emoji: "🤕", img: "https://i.imgur.com/wUoIG8T.png" },
-      { label: "おこった", emoji: "😠", img: "https://i.imgur.com/dAtk5yW.png" },
-      { label: "つかれた", emoji: "😴", img: "https://i.imgur.com/KR83GCU.png" },
-      { label: "たのしい", emoji: "🥳", img: "https://i.imgur.com/PtPHMnm.png" },
+      { label: "うれしい",   emoji: "😄", img: "https://i.imgur.com/cNwxC6a.png" },
+      { label: "かなしい",   emoji: "😢", img: "https://i.imgur.com/BCDTq32.png" },
+      { label: "こわい",     emoji: "😨", img: "https://i.imgur.com/CtLpkfU.png" },
+      { label: "いたい",     emoji: "🤕", img: "https://i.imgur.com/wUoIG8T.png" },
+      { label: "おこった",   emoji: "😠", img: "https://i.imgur.com/dAtk5yW.png" },
+      { label: "つかれた",   emoji: "😴", img: "https://i.imgur.com/KR83GCU.png" },
+      { label: "たのしい",   emoji: "🥳", img: "https://i.imgur.com/PtPHMnm.png" },
       { label: "はずかしい", emoji: "😳", img: "https://i.imgur.com/6L5Mg7a.png" },
     ]
   },
   {
     name: "こうどう",
     color: "#4ecdc4",
+    colorLight: "#4ecdc433",
     cards: [
-      { label: "たべる",   emoji: "🍽️", img: "" },
-      { label: "のむ",     emoji: "🥤", img: "" },
-      { label: "ねる",     emoji: "🛏️", img: "" },
-      { label: "あそぶ",   emoji: "🧸", img: "" },
-      { label: "トイレ",   emoji: "🚽", img: "" },
+      { label: "たべる",     emoji: "🍽️", img: "" },
+      { label: "のむ",       emoji: "🥤", img: "" },
+      { label: "ねる",       emoji: "🛏️", img: "" },
+      { label: "あそぶ",     emoji: "🧸", img: "" },
+      { label: "トイレ",     emoji: "🚽", img: "" },
       { label: "てをあらう", emoji: "🙌", img: "" },
       { label: "はをみがく", emoji: "🦷", img: "" },
-      { label: "おふろ",   emoji: "🛁", img: "" },
+      { label: "おふろ",     emoji: "🛁", img: "" },
     ]
   },
   {
     name: "スケジュール",
     color: "#a78bfa",
+    colorLight: "#a78bfa33",
     cards: [
-      { label: "おきる",   emoji: "⏰", img: "" },
+      { label: "おきる",     emoji: "⏰", img: "" },
       { label: "あさごはん", emoji: "🍳", img: "" },
-      { label: "きがえる", emoji: "👕", img: "" },
-      { label: "でかける", emoji: "🚪", img: "" },
-      { label: "かえる",   emoji: "🏠", img: "" },
+      { label: "きがえる",   emoji: "👕", img: "" },
+      { label: "でかける",   emoji: "🚪", img: "" },
+      { label: "かえる",     emoji: "🏠", img: "" },
       { label: "ひるごはん", emoji: "🍱", img: "" },
       { label: "よるごはん", emoji: "🍚", img: "" },
-      { label: "おやすみ", emoji: "🌙", img: "" },
+      { label: "おやすみ",   emoji: "🌙", img: "" },
     ]
   }
 ];
 
 let currentCat = null;
-let currentIndex = 0;
 let shuffled = [];
+let setIndex = 0;
+let selectedCards = [];
+let overlayTarget = null;
+let longPressTimer = null;
 
 function shuffle(arr) {
   const a = [...arr];
@@ -260,72 +430,166 @@ function shuffle(arr) {
 }
 
 function showCategory() {
+  currentCat = null;
+  selectedCards = [];
+  setIndex = 0;
   document.getElementById('categoryScreen').style.display = 'grid';
   document.getElementById('cardScreen').classList.remove('visible');
+  document.getElementById('doneScreen').classList.remove('visible');
   document.getElementById('backBtn').classList.remove('visible');
+  document.getElementById('headerSpacer').style.display = '';
   document.getElementById('headerTitle').textContent = 'えカード';
+  document.body.style.background = '#fff8f0';
+}
+
+function goBack() {
+  showCategory();
 }
 
 function startCategory(idx) {
   currentCat = categories[idx];
   shuffled = shuffle(currentCat.cards);
-  currentIndex = 0;
+  setIndex = 0;
+  selectedCards = [];
+
   document.getElementById('categoryScreen').style.display = 'none';
+  document.getElementById('doneScreen').classList.remove('visible');
   document.getElementById('cardScreen').classList.add('visible');
   document.getElementById('backBtn').classList.add('visible');
+  document.getElementById('headerSpacer').style.display = 'none';
   document.getElementById('headerTitle').textContent = currentCat.name;
-  document.body.style.background = currentCat.color + '22';
-  showCard();
+  document.body.style.background = currentCat.colorLight;
+
+  document.documentElement.style.setProperty('--cat-color', currentCat.color);
+  document.documentElement.style.setProperty('--cat-color-light', currentCat.colorLight);
 
   // プリロード
   currentCat.cards.forEach(c => {
     if (c.img) { const i = new Image(); i.src = c.img; }
   });
+
+  renderSet();
 }
 
-function showCard() {
-  const c = shuffled[currentIndex];
-  const card = document.getElementById('card');
-  const emoji = document.getElementById('cardEmoji');
-  const img = document.getElementById('cardImg');
-  const label = document.getElementById('cardLabel');
+function renderSet() {
+  const grid = document.getElementById('cardGrid');
+  const total = Math.ceil(shuffled.length / 4);
+  const set = shuffled.slice(setIndex * 4, setIndex * 4 + 4);
+  grid.innerHTML = '';
 
-  card.className = 'card';
-  void card.offsetWidth;
-  card.className = 'card anim';
+  set.forEach(c => {
+    const div = document.createElement('div');
+    div.className = 'card-item';
 
-  if (c.img) {
-    img.src = c.img;
-    img.style.display = 'block';
-    emoji.style.display = 'none';
-    img.onerror = () => { img.style.display = 'none'; emoji.style.display = 'block'; };
-  } else {
-    img.style.display = 'none';
-    emoji.style.display = 'block';
-  }
-  emoji.textContent = c.emoji;
-  label.textContent = c.label;
+    // タップ：選択トグル
+    div.addEventListener('click', () => toggleSelect(div, c));
 
+    // 長押し：拡大
+    div.addEventListener('touchstart', () => {
+      longPressTimer = setTimeout(() => openOverlay(c), 500);
+    }, { passive: true });
+    div.addEventListener('touchend', () => clearTimeout(longPressTimer));
+    div.addEventListener('touchmove', () => clearTimeout(longPressTimer));
+
+    if (c.img) {
+      const img = document.createElement('img');
+      img.src = c.img;
+      img.onerror = () => { img.style.display = 'none'; emojiSpan.style.display = 'block'; };
+      div.appendChild(img);
+    }
+
+    const emojiSpan = document.createElement('span');
+    emojiSpan.className = 'item-emoji';
+    emojiSpan.textContent = c.emoji;
+    if (c.img) emojiSpan.style.display = 'none';
+    div.appendChild(emojiSpan);
+
+    const label = document.createElement('div');
+    label.className = 'item-label';
+    label.textContent = c.label;
+    div.appendChild(label);
+
+    const check = document.createElement('div');
+    check.className = 'check-badge';
+    check.textContent = '✓';
+    div.appendChild(check);
+
+    grid.appendChild(div);
+  });
+
+  // ページ表示
   document.getElementById('progress').textContent =
-    (currentIndex + 1) + ' / ' + shuffled.length;
-
-  speak();
+    setIndex + 1 + ' / ' + total + ' ページ';
 }
 
-function next() {
-  currentIndex = (currentIndex + 1) % shuffled.length;
-  if (currentIndex === 0) shuffled = shuffle(currentCat.cards);
-  showCard();
+function toggleSelect(div, card) {
+  // 1枚タップで即確定
+  selectedCards = [card];
+  showDone();
 }
 
-function speak() {
-  const label = document.getElementById('cardLabel').textContent;
-  if (!label) return;
-  const u = new SpeechSynthesisUtterance(label);
-  u.lang = 'ja-JP';
-  u.rate = 0.85;
-  speechSynthesis.cancel();
-  speechSynthesis.speak(u);
+function confirmSelected() {
+  showDone();
+}
+
+function nextSet() {
+  // 選択解除してページ送り
+  const totalSets = Math.ceil(shuffled.length / 4);
+  setIndex = (setIndex + 1) % totalSets;
+  selectedCards = [];
+  renderSet();
+}
+
+function showDone() {
+  document.getElementById('cardScreen').classList.remove('visible');
+  document.getElementById('doneScreen').classList.add('visible');
+
+  // カテゴリカラーをリスタートボタンに適用
+  document.getElementById('btnRestart').style.background = currentCat.color;
+
+  // 選んだカード数に応じてメッセージ変更
+  const sub = document.getElementById('doneSub');
+  if (selectedCards.length === 1) {
+    sub.textContent = selectedCards[0].label + ' を えらんだね！';
+  } else {
+    sub.textContent = selectedCards.length + ' つ えらんだね！';
+  }
+
+  // 選択タグを表示
+  const list = document.getElementById('selectedList');
+  list.innerHTML = '';
+  selectedCards.forEach(c => {
+    const tag = document.createElement('div');
+    tag.className = 'selected-tag';
+    tag.textContent = (c.img ? '' : c.emoji + ' ') + c.label;
+    list.appendChild(tag);
+  });
+
+  // 完了絵文字はカテゴリのメインカードの絵文字を使う
+  document.getElementById('doneEmoji').textContent =
+    selectedCards.length > 0 ? selectedCards[0].emoji : '🎉';
+}
+
+function openOverlay(card) {
+  const oEmoji = document.getElementById('overlayEmoji');
+  const oImg = document.getElementById('overlayImg');
+  const oLabel = document.getElementById('overlayLabel');
+
+  if (card.img) {
+    oImg.src = card.img;
+    oImg.style.display = 'block';
+    oEmoji.style.display = 'none';
+  } else {
+    oEmoji.textContent = card.emoji;
+    oEmoji.style.display = 'block';
+    oImg.style.display = 'none';
+  }
+  oLabel.textContent = card.label;
+  document.getElementById('overlay').classList.add('visible');
+}
+
+function closeOverlay() {
+  document.getElementById('overlay').classList.remove('visible');
 }
 </script>
 </body>
