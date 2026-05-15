@@ -312,19 +312,19 @@
 <!-- カテゴリ選択 -->
 <div class="category-grid" id="categoryScreen">
   <button class="category-btn cat-0" onclick="startCategory(0)">
-    <span class="cat-emoji">🍎</span>
+    <img src="https://i.imgur.com/d8oVsuM.png" style="width:60px;height:60px;object-fit:contain;">
     <span class="cat-name">もの</span>
   </button>
   <button class="category-btn cat-1" onclick="startCategory(1)">
-    <span class="cat-emoji">😊</span>
+    <img src="https://i.imgur.com/1FnLaau.png" style="width:60px;height:60px;object-fit:contain;">
     <span class="cat-name">きもち</span>
   </button>
   <button class="category-btn cat-2" onclick="startCategory(2)">
-    <span class="cat-emoji">🏃</span>
+    <img src="https://i.imgur.com/rRgwVLY.png" style="width:60px;height:60px;object-fit:contain;">
     <span class="cat-name">こうどう</span>
   </button>
   <button class="category-btn cat-3" onclick="startCategory(3)">
-    <span class="cat-emoji">📅</span>
+    <img src="https://i.imgur.com/Bdu7xiS.png" style="width:60px;height:60px;object-fit:contain;">
     <span class="cat-name">スケジュール</span>
   </button>
 </div>
@@ -381,14 +381,36 @@ const categories = [
     color: "#ff6b9d",
     colorLight: "#ff6b9d33",
     cards: [
-      { label: "うれしい",   emoji: "😄", img: "https://i.imgur.com/cNwxC6a.png" },
-      { label: "かなしい",   emoji: "😢", img: "https://i.imgur.com/BCDTq32.png" },
-      { label: "こわい",     emoji: "😨", img: "https://i.imgur.com/CtLpkfU.png" },
-      { label: "いたい",     emoji: "🤕", img: "https://i.imgur.com/wUoIG8T.png" },
-      { label: "おこった",   emoji: "😠", img: "https://i.imgur.com/dAtk5yW.png" },
-      { label: "つかれた",   emoji: "😴", img: "https://i.imgur.com/KR83GCU.png" },
-      { label: "たのしい",   emoji: "🥳", img: "https://i.imgur.com/PtPHMnm.png" },
-      { label: "はずかしい", emoji: "😳", img: "https://i.imgur.com/6L5Mg7a.png" },
+      { label: "うれしい",     emoji: "😄", img: "https://i.imgur.com/MQNR2Yp.png" },
+      { label: "かなしい",     emoji: "😢", img: "https://i.imgur.com/ydEczOW.png" },
+      { label: "こわい",       emoji: "😨", img: "https://i.imgur.com/qJ4HQjr.png" },
+      { label: "いたい",       emoji: "🤕", img: "https://i.imgur.com/I68jLz5.png" },
+      { label: "おこった",     emoji: "😠", img: "https://i.imgur.com/qR3b0sw.png" },
+      { label: "つかれた",     emoji: "😴", img: "https://i.imgur.com/Li9XhLy.png" },
+      { label: "たのしい",     emoji: "🥳", img: "https://i.imgur.com/9j97NR2.png" },
+      { label: "はずかしい",   emoji: "😳", img: "https://i.imgur.com/BXGwPrA.png" },
+      { label: "びっくり",     emoji: "😲", img: "https://i.imgur.com/xfjLk5w.png" },
+      { label: "ねむい",       emoji: "😪", img: "https://i.imgur.com/2ZUpxJq.png" },
+      { label: "さみしい",     emoji: "🥺", img: "https://i.imgur.com/t6byDFv.png" },
+      { label: "ドキドキ",     emoji: "💓", img: "https://i.imgur.com/BWFrjiX.png" },
+      { label: "うらやましい", emoji: "😒", img: "https://i.imgur.com/wYa1jI2.png" },
+      { label: "きもちわるい", emoji: "🤢", img: "https://i.imgur.com/fJIOoxF.png" },
+      { label: "あきた",       emoji: "😑", img: "https://i.imgur.com/SzMmMiR.png" },
+      { label: "ワクワク",     emoji: "🤩", img: "https://i.imgur.com/4L12baY.png" },
+      { label: "ホッとした",   emoji: "😮‍💨", img: "https://i.imgur.com/x2eU6v5.png" },
+      { label: "イライラ",     emoji: "😤", img: "https://i.imgur.com/eVlLBc7.png" },
+      { label: "メソメソ",     emoji: "😭", img: "https://i.imgur.com/T144T1P.png" },
+      { label: "ハラハラ",     emoji: "😰", img: "https://i.imgur.com/urlVrSF.png" },
+      { label: "モジモジ",     emoji: "🙈", img: "https://i.imgur.com/snmC6Ne.png" },
+      { label: "ごめんなさい", emoji: "🙏", img: "https://i.imgur.com/g49Dmy2.png" },
+      { label: "ありがとう",   emoji: "🥰", img: "https://i.imgur.com/yrsZk1x.png" },
+      { label: "だいすき",     emoji: "❤️", img: "https://i.imgur.com/eMndL92.png" },
+      { label: "あつい",       emoji: "🥵", img: "https://i.imgur.com/oqsO7GH.jpeg" },
+      { label: "さむい",       emoji: "🥶", img: "https://i.imgur.com/HmnrUqz.png" },
+      { label: "はらぺこ",     emoji: "🍽️", img: "https://i.imgur.com/i5gyM2A.png" },
+      { label: "おでかけ",     emoji: "🚪", img: "https://i.imgur.com/3W4lFDv.png" },
+      { label: "おやつ",       emoji: "🍪", img: "https://i.imgur.com/gLPxDz6.jpeg" },
+      { label: "トイレ",       emoji: "🚽", img: "https://i.imgur.com/0rceol5.png" },
     ]
   },
   {
