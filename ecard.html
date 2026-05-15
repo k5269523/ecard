@@ -79,19 +79,19 @@
   .card-screen { display: none; width: 100%; max-width: 480px; flex-direction: column; align-items: center; }
   .card-screen.visible { display: flex; }
 
-  /* 4枚グリッド */
+  /* 2枚グリッド */
   .card-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0.8rem;
+    gap: 1rem;
     width: 100%;
     margin-bottom: 1.2rem;
   }
   .card-item {
     background: #fff;
     border: 3px solid #eee;
-    border-radius: 16px;
-    padding: 0.8rem;
+    border-radius: 20px;
+    padding: 1.2rem 0.8rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -99,7 +99,7 @@
     cursor: pointer;
     box-shadow: 0 4px 10px rgba(0,0,0,0.06);
     transition: transform 0.15s, border-color 0.15s;
-    min-height: 140px;
+    min-height: 200px;
     position: relative;
     -webkit-tap-highlight-color: transparent;
   }
@@ -109,17 +109,17 @@
     box-shadow: 0 0 0 3px var(--cat-color-light);
   }
   .card-item img {
-    width: 80px;
-    height: 80px;
+    width: 120px;
+    height: 120px;
     object-fit: contain;
-    border-radius: 8px;
+    border-radius: 10px;
   }
-  .card-item .item-emoji { font-size: 3.5rem; line-height: 1; }
+  .card-item .item-emoji { font-size: 5rem; line-height: 1; }
   .card-item .item-label {
-    font-size: 1rem;
+    font-size: 1.1rem;
     font-weight: 700;
     color: #333;
-    margin-top: 0.5rem;
+    margin-top: 0.7rem;
     min-height: 1.4em;
     text-align: center;
   }
@@ -483,8 +483,8 @@ function startCategory(idx) {
 
 function renderSet() {
   const grid = document.getElementById('cardGrid');
-  const total = Math.ceil(shuffled.length / 4);
-  const set = shuffled.slice(setIndex * 4, setIndex * 4 + 4);
+  const total = Math.ceil(shuffled.length / 2);
+  const set = shuffled.slice(setIndex * 2, setIndex * 2 + 2);
   grid.innerHTML = '';
 
   set.forEach(c => {
@@ -555,7 +555,7 @@ function confirmSelected() {
 
 function nextSet() {
   // 選択解除してページ送り
-  const totalSets = Math.ceil(shuffled.length / 4);
+  const totalSets = Math.ceil(shuffled.length / 2);
   setIndex = (setIndex + 1) % totalSets;
   selectedCards = [];
   renderSet();
