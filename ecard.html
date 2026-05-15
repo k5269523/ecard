@@ -346,7 +346,7 @@
     <div class="done-emoji" id="doneEmoji" style="display:none"></div>
   </div>
   <div class="done-word" id="doneWord" onclick="speak(selectedCards[0].label)" style="cursor:pointer"></div>
-  <button class="btn-restart" id="btnRestart" onclick="showCategory()">もどる</button>
+  <button class="btn-restart" id="btnRestart" onclick="backToCards()">もどる</button>
 </div>
 
 <!-- 拡大オーバーレイ -->
@@ -561,6 +561,13 @@ function nextSet() {
   renderSet();
 }
 
+function backToCards() {
+  window.speechSynthesis.cancel();
+  document.getElementById('doneScreen').classList.remove('visible');
+  document.getElementById('cardScreen').classList.add('visible');
+  selectedCards = [];
+  renderSet();
+}
 function showDone() {
   document.getElementById('cardScreen').classList.remove('visible');
   document.getElementById('doneScreen').classList.add('visible');
